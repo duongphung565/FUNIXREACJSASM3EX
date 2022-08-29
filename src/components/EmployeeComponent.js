@@ -70,11 +70,12 @@ function Employee(props) {
         console.log(newStaff);
 
     }
-    const validate = (name, doB, startDate) => {
+    const validate = (name, doB, startDate, salaryScale) => {
         const errors = {
             name: '',
             salaryScale: '',
-
+            doB: '',
+            startDate: ''
 
         };
         if (newStaff.touched.name && name.length < 3) {
@@ -82,9 +83,22 @@ function Employee(props) {
         } else if (newStaff.touched.name && name.length > 30)
             errors.name = "Yêu cầu ít hơn 30 ký tự"
 
-        if (newStaff.touched.salaryScale && newStaff.salaryScale < 1 || newStaff.salaryScale > 3)
+        if (newStaff.touched.salaryScale && salaryScale < 1 || salaryScale > 3)
             errors.salaryScale = "Hệ số từ 1.0 -> 3.0";
+        if (newStaff.touched.doB && doB == '') {
+            errors.doB = "Ngày sinh không được để trống"
+        }
+        if (newStaff.touched.startDate && startDate == '') {
+            errors.startDate = "Ngày vào công ty không được để trống"
 
+        }
+        if (doB !== "" && startDate !== "" && doB > startDate) {
+            errors.doB = "Ngày sinh phải trước ngày vào công ty"
+        }
+
+
+
+        console.log("startDate" + startDate);
         return errors;
     }
 
@@ -99,7 +113,7 @@ function Employee(props) {
 
     }
     const checkValidate = () => {
-        if (errors.name === '' && errors.salaryScale === '' && newStaff.touched.name && newStaff.touched.salaryScale) {
+        if (errors.name === '' && errors.salaryScale === '' && errors.doB === '' && errors.startDate === '' && newStaff.touched.name && newStaff.touched.salaryScale && newStaff.touched.doB && newStaff.touched.startDate) {
             console.log("valide" + isValidate);
             return true;
         } else {
@@ -162,7 +176,7 @@ function Employee(props) {
         }));
 
     }
-    const errors = validate(newStaff.name, newStaff.doB, newStaff.startDate);
+    const errors = validate(newStaff.name, newStaff.doB, newStaff.startDate, newStaff.salaryScale);
 
 
 
@@ -220,8 +234,6 @@ function Employee(props) {
                                     onBlur={handlerBlur('name')}
                                     onChange={handleInputChange}
                                 />
-
-
                                 <FormFeedback>
                                     {errors.name}
                                 </FormFeedback>
@@ -256,8 +268,6 @@ function Employee(props) {
                                     onBlur={handlerBlur('startDate')}
                                     onChange={handleInputChange}
                                 />
-
-
                                 <FormFeedback>
                                     {errors.startDate}
                                 </FormFeedback>
@@ -269,8 +279,6 @@ function Employee(props) {
                                 <Input type="select" id="department" name="department"
 
                                     value={newStaff.department}
-                                    valid={errors.department === ''}
-                                    invalid={errors.department !== ''}
                                     onBlur={handlerBlur('department')}
                                     onChange={handleInputChange}
                                 >
@@ -314,8 +322,7 @@ function Employee(props) {
                                 <Input type="number" id="annualLeave" name="annualLeave"
 
                                     value={newStaff.annualLeave}
-                                    valid={errors.annualLeave === ''}
-                                    invalid={errors.annualLeave !== ''}
+
                                     onBlur={handlerBlur('annualLeave')}
                                     onChange={handleInputChange}
                                 />
@@ -330,8 +337,7 @@ function Employee(props) {
                                 <Input type="number" id="overTime" name="overTime"
 
                                     value={newStaff.overTime}
-                                    valid={errors.overTime === ''}
-                                    invalid={errors.overTime !== ''}
+
                                     onBlur={handlerBlur('overTime')}
                                     onChange={handleInputChange}
                                 />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Card, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, CardHeader, Label, Input, Button, Alert } from 'reactstrap';
+import { Card, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, CardHeader } from 'reactstrap';
 //Hàm tính lương 
 function CountSalary({ staff }) {
     const salaryEmployee = staff.salaryScale * 3000000 + staff.overTime * 200000;

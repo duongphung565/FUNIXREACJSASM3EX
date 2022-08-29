@@ -73,9 +73,6 @@ class Main extends Component {
                 console.log("check id" + fid);
 
             } while (this.state.staffs.filter((staff) => staff.id === fid).length != 0)
-
-
-
         }
 
         return (
