@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 
 import {
     Card, CardImg, CardBody,
-    CardTitle, Col, Label, Button, Modal, ModalHeader, ModalBody, FormGroup, Row, Input
+    CardTitle, Col, Label, Button, Modal, ModalHeader, ModalBody, FormGroup, Row, Input, FormFeedback
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors, Field } from 'react-redux-form';
@@ -35,11 +35,57 @@ function Employee(props) {
     const [searchInput, setSearchInput] = useState('');
     const [isModalOpen, setModalOpen] = useState(false);
     const inputEL = useRef();
+
     const [newStaff, setNewStaff] = useState({
         doB: '',
         startDate: '',
-
+        touched: {
+            doB: false,
+            startDate: false,
+        }
     })
+    const validate2 = (doB, startDate) => {
+        console.log("check valid");
+        const errors = {
+            doB: '',
+            startDate: ''
+        };
+
+        if (newStaff.touched.doB && doB == '') {
+            errors.doB = "Ngày sinh không được để trống"
+        }
+        if (newStaff.touched.startDate && startDate == '') {
+            errors.startDate = "Ngày vào công ty không được để trống"
+
+        }
+        if (doB !== "" && startDate !== "" && doB > startDate) {
+            errors.doB = "Ngày sinh phải trước ngày vào công ty"
+        }
+        return errors;
+    }
+    const checkValidate = () => {
+        if (errors.doB === '' && errors.startDate === '' && newStaff.touched.doB && newStaff.touched.startDate) {
+
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+    //Kiểm tra gán touched cho sư kiên click vào input
+    const handlerBlur = (field) => (evt) => {
+        console.log(newStaff.touched.name);
+        setNewStaff({
+            ...newStaff,
+            touched: {
+                ...newStaff.touched,
+                [field]: true
+            }
+        })
+        console.log(newStaff);
+
+    }
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
     }
@@ -52,10 +98,13 @@ function Employee(props) {
         setModalOpen(!isModalOpen);
     }
     const addHandleSubmit = (values) => {
-        const staff = { ...values, ...newStaff };
-        props.parentCallbackEmployeeForm(staff)
-        toggleModal();
-        clearForm();
+        if (checkValidate) {
+            const staff = { ...values, ...newStaff };
+            props.parentCallbackEmployeeForm(staff)
+            toggleModal();
+            clearForm();
+        }
+
     }
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -70,9 +119,17 @@ function Employee(props) {
 
         setNewStaff({
             doB: '',
-            startDate: ''
+            startDate: '',
+            touched: {
+                doB: false,
+                startDate: false,
+
+            }
         })
+
+
     }
+    const errors = validate2(newStaff.doB, newStaff.startDate);
     const listSearch = props.staffs.filter(item => item.name.toLowerCase().includes(searchInput.toLowerCase()));
     return (
         <div className='container'>
@@ -134,7 +191,7 @@ function Employee(props) {
                                     model=".name"
                                     show="touched"
                                     messages={{
-                                        required: 'Required',
+                                        required: 'Phải nhập tên',
                                         minLength: 'Yêu cấu lơn hơn 3 ký tự',
                                         maxLength: 'Yêu cầu ít hơn 30 ký tự'
                                     }}
@@ -147,48 +204,30 @@ function Employee(props) {
                                 <Input type="date" id="doB" name="doB"
                                     placeholder="Ngày Sinh"
                                     value={newStaff.doB}
-
+                                    valid={errors.doB === ''}
+                                    invalid={errors.doB !== ''}
+                                    onBlur={handlerBlur('doB')}
                                     onChange={handleInputChange}
-                                    validators={
-                                        {
-                                            required
-                                        }
-                                    }
                                 />
 
-
-                                <Errors
-                                    className="text-danger"
-                                    model=".doB"
-                                    show="touched"
-                                    messages={{
-                                        required: 'Phải chọn ngày sinh'
-                                    }}
-
-                                />
+                                <FormFeedback>
+                                    {errors.doB}
+                                </FormFeedback>
                             </Col>
                         </Row>
-
-
-
-
                         <Row className="form-group">
                             <Label for="startDate" md={4} >Ngày vào công ty</Label>
                             <Col md={8}>
                                 <Input type="date" id="startDate" name="startDate"
-
-                                    className="form-group"
-
+                                    value={newStaff.startDate}
+                                    valid={errors.startDate === ''}
+                                    invalid={errors.startDate !== ''}
+                                    onBlur={handlerBlur('startDate')}
                                     onChange={handleInputChange}
                                 />
-
-
-                                <Errors
-                                    className="text-danger"
-                                    model=".startDate"
-                                    show="touched"
-
-                                />
+                                <FormFeedback>
+                                    {errors.startDate}
+                                </FormFeedback>
                             </Col>
                         </Row>
                         <Row className="form-group">
